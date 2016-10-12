@@ -1,0 +1,13 @@
+{
+  "options": [
+    "setClasses"
+  ],
+  "feature-detects": [
+    "webgl",
+    "canvas",
+    "css/transitions",
+    "css/filters",
+    "svg/clippaths",
+    "workers/webworkers"
+  ]
+}

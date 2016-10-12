@@ -1,0 +1,13 @@
+textOut()
+  text-indent: 100% 
+  white-space: nowrap
+  overflow: hidden
+  color: transparent
+
+// responsive
+pc($width)
+  @media all and (min-width: $width)
+      {block}
+sp($width)
+  @media all and (max-width: $width)
+      {block}

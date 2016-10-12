@@ -1,0 +1,41 @@
+$mainWidth = 100%
+//Color
+$baseFontColor = #2c3e50
+
+//Font
+$baseFontFamily = "Montserrat","ヒラギノ角ゴ Pro W3" , "Hiragino Kaku Gothic Pro" , "ＭＳ Ｐゴシック" , "MS PGothic" ,"メイリオ",Meiryo, sans-serif
+$baseFontSize = 22px
+// webfont('NotoSansCJKjp', './fonts/NotoSansCJKjp', false, 'bold')
+
+// Grid Break Point
+$pcWidth = 800px
+$spWidth = 799px
+
+
+// baseStyle
+html
+  font-size: $baseFontSize
+body
+  font-family: $baseFontFamily
+  -webkit-font-smoothing: antialiased;
+  background-color: #ecf0f1
+  color: $baseFontColor
+  width: $mainWidth
+
+h1,h2,h3,h4,h5,h6
+  -webkit-font-smoothing: antialiased;
+  font-size: 1rem
+  color: $baseFontColor
+p
+  color: $baseFontColor
+  font-size: 1rem
+  color: $baseFontColor
+
+a
+  color: $baseFontColor
+  text-decoration: none
+a:hover
+  text-decoration: underline
+
+img,iframe
+  vertical-align: top

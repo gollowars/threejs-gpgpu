@@ -1,0 +1,62 @@
+doctype html
+html(lang = data.meta.lang)
+  head
+    meta(charset="utf-8")
+
+    - ogTitle = data.meta.ogtitle
+    - ogDesc = data.meta.description
+    - pageTitle = data.meta.title
+    
+    block pageTitleBlock
+
+
+    title #{pageTitle}
+    meta(name='description', content=data.meta.description)
+    meta(name='keywords', content=data.meta.keywords)
+    meta(name="viewport",content="width=device-width, initial-scale=1.0")
+    // OGP
+    meta(property='og:title', content=ogTitle)
+    meta(property='og:description', content=ogDesc)
+    meta(property='og:site_name', content=data.meta.sitename)
+    meta(property='og:type', content='article')
+    meta(property="article:author",content=data.meta.author)
+    meta(property='og:image', content="//yowapeda-swipe.jp/images/common/og_main.png")
+    meta(property='og:url', content=data.meta.ogurl)
+    // twitter
+    meta(name="twitter:card" content="summary_large_image")
+    meta(name="twitter:description" content=ogDesc)
+    meta(name="twitter:title" content=ogTitle)
+    meta(name="twitter:url" content=data.meta.ogurl)
+    meta(name="twitter:image" content="//yowapeda-swipe.jp/images/common/og_main.png")
+    // favicon`
+    meta(name="apple-mobile-web-app-capable" content="yes")
+    link(rel="apple-touch-icon-precomposed" href="/images/apple-touch-icon.png")
+    link(rel="apple-touch-icon-precomposed",size="76x76" href="/images/apple-touch-icon-76x76.png")
+    link(rel="apple-touch-icon-precomposed",size="120x120" href="/images/apple-touch-icon-120x120.png")
+    link(rel="apple-touch-icon-precomposed",size="152x152" href="/images/apple-touch-icon-152x152.png")
+    link(rel="shortcut icon",href="/images/favicon.ico",type="image/x-icon")
+    script(src="#{path}js/modernizr.js")
+    link(href="#{path}css/main.css",rel="stylesheet")
+    block headerCss
+    
+
+    meta(id="path", name="path", content="#{path}")
+
+  body
+    include _header
+
+    block content
+
+    include _footer
+
+    script(src="#{path}js/lib.js")
+    block bottomjs
+    
+    //- GA
+    //- script.
+    //-   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    //-   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    //-   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    //-   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    //-   ga('create', 'UA-82747331-1', 'auto');
+    //-   ga('send', 'pageview');

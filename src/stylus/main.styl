@@ -1,0 +1,71 @@
+@import "./_normalize"
+@import "./_reset"
+@import "./_setting"
+@import "./_animate"
+@import "./_util"
+@import 'jeet'
+
+  
+//////////////////////////////
+// header
+//////////////////////////////
+header
+  height: 100px
+  background-color: #f1c40f
+  border: solid 4px #2c3e50
+  padding: 10px
+//////////////////////////////
+// footer
+//////////////////////////////
+footer
+  clear: both
+  height: 100px
+  background-color: #e74c3c
+  border: solid 4px #2c3e50
+  padding: 10px
+
+//////////////////////////////
+// component
+//////////////////////////////
+.grid-container
+  width: 100%
+
+.grid-item
+  col(1/3,0,0,0,0)
+  position: relative
+  border: solid 4px #2c3e50
+  box-sizing: border-box
+  +sp($pcWidth)
+    col(1,0,0,0,0)
+
+  &:after
+    display: block
+    padding-top: 100%
+  .inner
+    padding: 10px
+    background-color: #e74c3c
+  
+  p
+    color: #ecf0f1
+
+  &:nth-child(2n)
+    .inner
+      align(vertical)
+
+  &:nth-child(2n):after
+    background-image: url("../images/profile.png")
+    background-size: cover
+
+  &:nth-child(2n+1)
+    .inner
+      align(horizontal)
+  &:nth-child(2n+1):after
+    background-color: #3498db
+    
+  &:nth-child(3n)
+    .inner
+      align(both)
+  &:nth-child(3n):after
+    background-color: #2ecc71
+    background-image: none
+    
