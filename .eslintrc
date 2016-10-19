@@ -31,5 +31,6 @@
     "TWEEN": false,
     "Modernizr": false,
     "_": false,
+    "platform": false
   }
 }

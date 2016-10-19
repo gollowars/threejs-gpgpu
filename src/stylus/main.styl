@@ -5,15 +5,68 @@
 @import "./_util"
 @import 'jeet'
 
-  
+
+$borderWidth = 15px
+$borderColor = #2c3e50
+body 
+  box-sizing: border-box
 //////////////////////////////
 // header
 //////////////////////////////
 header
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
   height: 100px
+  z-index: 11
+  box-sizing: border-box
   background-color: #f1c40f
-  border: solid 4px #2c3e50
-  padding: 10px
+  border-bottom: $borderWidth solid $borderColor
+  padding: 30px
+  overflow: hidden
+  .header-title
+    float: left
+  
+  &:before
+    content: ''
+    display: block
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: $borderWidth
+    z-index: 10
+    background-color: $borderColor
+  
+  &:after
+    content: ''
+    display: block
+    position: fixed
+    top: 0
+    left: 0
+    width: $borderWidth
+    height: 100%
+    z-index: 10000
+    background-color: $borderColor
+
+//////////////////////////////
+// nav
+//////////////////////////////
+nav
+  width: 150px
+  float: right
+  +sp($pcWidth)
+    width: 100%
+    // position: fixed
+    // top: 0
+    // left: 0
+  li
+    col(1/2,0,0,0)
+    +sp($pcWidth)
+      col(1,0,0,0)
+      text-align: center
+
 //////////////////////////////
 // footer
 //////////////////////////////
@@ -21,22 +74,62 @@ footer
   clear: both
   height: 100px
   background-color: #e74c3c
-  border: solid 4px #2c3e50
-  padding: 10px
+  padding: 15px 30px
+
+  &:before
+    content: ''
+    display: block
+    position: fixed
+    bottom: 0
+    left: 0
+    width: 100%
+    height: $borderWidth
+    z-index: 10000
+    background-color: $borderColor
+  
+  &:after
+    content: ''
+    display: block
+    position: fixed
+    top: 0
+    right: 0
+    width: $borderWidth
+    height: 100%
+    z-index: 10000
+    background-color: $borderColor
 
 //////////////////////////////
 // component
 //////////////////////////////
-.grid-container
+.container
+  padding-top: 100px
+//
+.movie-area
   width: 100%
+  overflow: hidden
+  height: 100vh
+  z-index: -1
+
+// grid
+.grid-container
+  position: relative
+  width: 100%
+  overflow: hidden
+  border-top: solid $borderWidth #2c3e50
+  box-sizing: border-box
 
 .grid-item
   col(1/3,0,0,0,0)
   position: relative
-  border: solid 4px #2c3e50
+  border-left: solid ($borderWidth/2) #2c3e50
+  border-right: solid ($borderWidth/2) #2c3e50
+  border-bottom: solid $borderWidth #2c3e50
   box-sizing: border-box
+  overflow: hidden
   +sp($pcWidth)
     col(1,0,0,0,0)
+    border-left: solid $borderWidth #2c3e50
+    border-right: solid $borderWidth #2c3e50
 
   &:after
     display: block
@@ -44,7 +137,17 @@ footer
   .inner
     padding: 10px
     background-color: #e74c3c
-  
+
+  &:last-child:before
+    content: ''
+    position: absolute
+    display: block
+    top: 0
+    right: -15px
+    width: 15px
+    padding-top: 110%
+    background-color: $borderColor
+    z-index: 1000
   p
     color: #ecf0f1
 

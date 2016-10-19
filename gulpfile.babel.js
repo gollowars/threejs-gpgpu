@@ -34,7 +34,9 @@ gulp.task('webpack', () => {
   let config = {
     watch: true,
     entry: {
-      main: "./src/js/main.js"
+      main: "./src/js/main.js",
+      detectpc: "./src/js/detectpc.js",
+      detectsp: "./src/js/detectsp.js"
     },
     output: {
       filename: '[name].js'
@@ -99,7 +101,7 @@ gulp.task('jade',['data'], () => {
 
   let env = getEnv()
 
-  return gulp.src(['./src/pages/**/*.jade', '!./src/pages/layout/*.jade', '!./src/pages/include/*'])
+  return gulp.src(['./src/pages/**/*.jade', '!./src/pages/layout/*.jade'])
     .pipe($.data( (file) => {
       let p = path.dirname(file.path).split('/src/').pop().split('/')
       let relativePath = p.reduce((x, y) => {
@@ -195,21 +197,22 @@ gulp.task('assets', () => {
   )
 })
 
-gulp.task('concat-lib',['modernizr'], () => {
+gulp.task('concat-lib',['lib'], () => {
   let env = getEnv()
   return gulp.src([
       './src/js/lib/jquery.js',
       './src/js/lib/jquery.easing.min.js',
-      './src/js/lib/logger.min.js'
+      './src/js/lib/logger.min.js',
+      './src/js/lib/jquery.pjax.js'
     ])
     .pipe($.concat('lib.js'))
     .pipe($.uglify({preserveComments: 'some'}))
     .pipe(gulp.dest(env.dest + 'js/'))
 })
 
-gulp.task('modernizr',()=>{
+gulp.task('lib',()=>{
   let env = getEnv()
-  gulp.src(['./src/js/modernizr.js'])
+  gulp.src(['./src/js/modernizr.js','./src/js/platform.js'])
   .pipe(gulp.dest(env.dest + 'js/'))
 })
 

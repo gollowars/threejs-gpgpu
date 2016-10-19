@@ -9,6 +9,7 @@ html(lang = data.meta.lang)
     
     block pageTitleBlock
 
+
     title #{pageTitle}
     meta(name='description', content=data.meta.description)
     meta(name='keywords', content=data.meta.keywords)
@@ -35,7 +36,7 @@ html(lang = data.meta.lang)
     link(rel="apple-touch-icon-precomposed",size="152x152" href="/images/apple-touch-icon-152x152.png")
     link(rel="shortcut icon",href="/images/favicon.ico",type="image/x-icon")
     script(src="#{path}js/platform.js")
-    script(src="#{path}js/detectpc.js")
+    script(src="#{path}js/detectsp.js")
     script(src="#{path}js/modernizr.js")
     link(href="#{path}css/main.css",rel="stylesheet")
     block headerCss

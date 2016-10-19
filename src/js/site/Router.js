@@ -19,13 +19,10 @@ export class Router {
   }
 
   action(){
+    App.setCurrentPath()
     let currentKey = Object.keys(this.actions).filter((k)=> {
       if(App.currentPath == k) return true}
     )[0]
-
-    if(typeof this.commonAction == "function"){
-      this.commonAction()
-    }
 
     Logger.debug("Current Action Key is : ",currentKey)
     if(currentKey){
