@@ -12,20 +12,17 @@ export class Top {
 
   run(){
     Logger.debug("Top.run");
-    let movieArray = ['/videos/sample.mp4','/videos/sample.ogv','/videos/sample.webm']
-    let options = {
-      movieSize: {
-        width: 582,
-        height: 360
-      },
-      thumb: '/videos/sample.png',
-      autoplay: false
-    }
 
-    $('.grid-item').each(function(index, el) {
-      new VideoBoxer($(el),movieArray,options)
-    });
-    this.videoBoxer = new VideoBoxer($('#movieArea'),movieArray,options)
+    $('#fullpage').fullpage({
+      loopTop: true,
+      loopBottom: true,
+      loopHorizontal: true,
+      scrollingSpeed: 700,
+      easingcss3: 'cubic-bezier(0.86, 0, 0.07, 1)',
+      navigation: true,
+      navigationPosition: 'right',
+      showActiveTooltip: false
+    })
 
   }
 }

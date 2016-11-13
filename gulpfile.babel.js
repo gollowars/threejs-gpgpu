@@ -203,7 +203,8 @@ gulp.task('concat-lib',['lib'], () => {
       './src/js/lib/jquery.js',
       './src/js/lib/jquery.easing.min.js',
       './src/js/lib/logger.min.js',
-      './src/js/lib/jquery.pjax.js'
+      './src/js/lib/jquery.pjax.js',
+      './src/js/lib/jquery.fullpage.js'
     ])
     .pipe($.concat('lib.js'))
     .pipe($.uglify({preserveComments: 'some'}))
