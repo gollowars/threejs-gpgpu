@@ -57,9 +57,15 @@ class SiteManager {
         e.preventDefault()
         nextPageLink = $(e.currentTarget).attr('href')
         $(document).trigger(App.event.pageTranslateStart)
-        $(document).trigger(App.event.pageTranslateReady)
       })
 
+
+      $(document).on(App.event.pageTranslateStart,()=>{
+        this.commonAction.pageTranslateStart()
+        .done(()=>{
+          $(document).trigger(App.event.pageTranslateReady)
+        })
+      })
 
       $(document).on(App.event.pageTranslateReady,()=>{
         $.pjax({
