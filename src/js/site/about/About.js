@@ -1,13 +1,15 @@
-export class About {
-  constructor() {
-    Logger.debug("About.intialize");
-    this.init()
+import { Page } from '../Page'
+
+export class About extends Page {
+
+  setup(){
   }
 
-  init(){
+  enter(){
+    Logger.debug('About:Enter!!')
   }
 
-  run(){
-    Logger.debug("About.run");
+  exit(){
+    Logger.debug('About:Exit!!')
   }
 }

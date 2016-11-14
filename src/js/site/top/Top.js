@@ -1,17 +1,8 @@
-import VideoBoxer from 'videoBoxer'
+import { Page } from '../Page'
 
-export class Top {
-  constructor() {
-    Logger.debug("Top.intialize");
-
-    this.init()
-  }
-  init(){
-    
-  }
-
-  run(){
-    Logger.debug("Top.run");
+export class Top extends Page {
+  enter(){
+    Logger.debug('Top:Enter!!')
 
     $('#fullpage').fullpage({
       loopTop: true,
@@ -25,4 +16,10 @@ export class Top {
     })
 
   }
+
+  exit(){
+    Logger.debug('Top:Exit!!')
+    $.fn.fullpage.destroy('all')
+  }
+
 }

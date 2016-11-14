@@ -6,7 +6,8 @@ extends ./layout/_layout.jade
 block content
   #fullpage.fullpage-main
     for value, index in ['photo','photo','photo']
-      - image = './images/image'+(index+1)+'.jpg'
+      //- - image = './images/image'+(index+1)+'.jpg'
+      - image = './images/profile.png'
       section.section.fullpage-main__section(style='background-image:url('+image+')')
         h3: = value +(index+1)
 

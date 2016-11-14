@@ -11,17 +11,18 @@ export class Common {
     Logger.debug("Common.run");
   }
 
-  pageTranslateStart(){
-    Logger.debug("Common.pageTranslateStart");
-
-
-    $(document).trigger(App.event.pageTranslateReady)
-  }
-
-  pageEnd(){
-    Logger.debug("Common.pageStart");
-  }
   addEvent(){
     $(document).on(App.event.pageTranslateStart,this.pageTranslateStart)
+    $(document).on(App.event.pageTranslateEnd,this.pageTranslateEnd)
   }
+
+
+  pageTranslateStart(){
+    Logger.debug("Common.pageTranslateStart");
+  }
+
+  pageTranslateEnd(){
+    Logger.debug("Common.pageTranslateEnd");
+  }
+  
 }

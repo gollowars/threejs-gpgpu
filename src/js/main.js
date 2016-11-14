@@ -3,15 +3,14 @@ import { Router } from './site/Router'
 import { Top } from './site/top/Top'
 import Config from './site/Config'
 import { About } from './site/about/About'
+import { PageMachine } from './site/PageMachine'
 import App from './site/App'
-
 
 
 class SiteManager {
   constructor(){
     this.init()
     this.addEvent()
-
   }
 
   init(){
@@ -24,16 +23,17 @@ class SiteManager {
     }
 
     this.commonAction = new Common()
-    this.topAction = new Top()
-    this.aboutAction = new About()
-
+    this.pageMachine = new PageMachine({
+      'top': new Top(),
+      'about': new About()
+    })
 
     this.router = new Router({
       "/":()=>{
-        this.topAction.run()
+        this.pageMachine.changePage('top')
       },
       "/about/":()=>{
-        this.aboutAction.run()
+        this.pageMachine.changePage('about')
       }
     })
   }
@@ -43,20 +43,24 @@ class SiteManager {
       Logger.debug('pageshow')
       this.commonAction.run()
       this.router.action()
-    })
 
+      this.addPjaxEvent()
+    })
+  }
+
+  addPjaxEvent(){
     // pjax
-    var pageLink = ''
+    let nextPageLink = ''
     if($.support.pjax) {
-      $('a[data-pjax]').on('click',function(e){
+      $('a[data-pjax]').on('click',(e)=>{
         e.preventDefault()
-        pageLink = $(e.currentTarget).attr('href')
+        nextPageLink = $(e.currentTarget).attr('href')
         $(document).trigger(App.event.pageTranslateStart)
       })
 
-      $(document).on(App.event.pageTranslateReady,function(){
+      $(document).on(App.event.pageTranslateReady,()=>{
         $.pjax({
-          url: pageLink,
+          url: nextPageLink,
           container: '#pageContainer',
           fragment: '#pageContainer'
         })
@@ -66,9 +70,15 @@ class SiteManager {
         $(document).trigger(App.event.pageTranslateEnd)
         this.router.action()
       })
-    }
 
+      $(document).on('pjax:timeout', function(e) {
+        e.preventDefault()
+      })
+
+    }
   }
+
+
 }
 
 new SiteManager()
