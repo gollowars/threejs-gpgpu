@@ -52,11 +52,14 @@ class SiteManager {
     // pjax
     let nextPageLink = ''
     if($.support.pjax) {
+
       $('a[data-pjax]').on('click',(e)=>{
         e.preventDefault()
         nextPageLink = $(e.currentTarget).attr('href')
         $(document).trigger(App.event.pageTranslateStart)
+        $(document).trigger(App.event.pageTranslateReady)
       })
+
 
       $(document).on(App.event.pageTranslateReady,()=>{
         $.pjax({
@@ -67,7 +70,6 @@ class SiteManager {
       })
 
       $(document).on('pjax:end',()=>{
-        $(document).trigger(App.event.pageTranslateEnd)
         this.router.action()
       })
 

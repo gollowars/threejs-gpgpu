@@ -1,4 +1,5 @@
 import { Page } from '../Page'
+import App from '../App'
 
 export class Top extends Page {
   enter(){
@@ -15,6 +16,7 @@ export class Top extends Page {
       showActiveTooltip: false
     })
 
+    $(document).trigger(App.event.pageTranslateEnd)
   }
 
   exit(){

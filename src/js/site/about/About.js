@@ -1,12 +1,11 @@
 import { Page } from '../Page'
+import App from '../App'
 
 export class About extends Page {
 
-  setup(){
-  }
-
   enter(){
     Logger.debug('About:Enter!!')
+    $(document).trigger(App.event.pageTranslateEnd)
   }
 
   exit(){
