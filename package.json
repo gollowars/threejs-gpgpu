@@ -25,6 +25,7 @@
     "filecopy": "^2.0.2",
     "fs-extra": "^0.30.0",
     "fullpage.js": "^2.8.8",
+    "gsap": "^1.19.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
