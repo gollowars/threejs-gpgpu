@@ -17,7 +17,6 @@ export class Top extends Page {
     })
 
 
-
     $(document).trigger(App.event.pageTranslateEnd)
   }
 

@@ -8,6 +8,9 @@
 
 $borderWidth = 15px
 $borderColor = #2c3e50
+
+$loadingZIndex = 101
+
 body 
   box-sizing: border-box
 //////////////////////////////
@@ -19,7 +22,7 @@ header
   left: 0
   width: 100%
   height: 70px
-  z-index: 11
+  z-index: 2
   box-sizing: border-box
   padding: 20px
   overflow: hidden
@@ -50,7 +53,18 @@ footer
   clear: both
   padding: 15px 30px
 
-
+//////////////////////////////
+// loading
+//////////////////////////////
+.loading
+  position: fixed
+  top: 0
+  right: 0
+  width: 100%
+  height: 100%
+  overflow: hidden
+  background-color: red
+  z-index: $loadingZIndex
 //////////////////////////////
 // component
 //////////////////////////////
@@ -58,11 +72,13 @@ footer
   position: absolute
   top: 0
   left: 0
-
+  width: 100%
+  height: 100%
+  overflow: hidden
+  
 
 .fullpage-main__section
   box-sizing: border-box
-  padding-left: 20px
   background-size: cover
   background-position: center center
   
