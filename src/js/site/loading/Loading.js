@@ -42,7 +42,9 @@ export class Loading {
       this.target,
       this.tweenSpeed,
       {
-          width:"0%",
+          width:"100%",
+          opacity: 0.0,
+          zIndex: -1,
           ease:Expo.easeInOut,
           onComplete:()=>{
           }

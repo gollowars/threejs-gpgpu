@@ -3,6 +3,8 @@ import { Router } from './site/Router'
 import { Top } from './site/top/Top'
 import Config from './site/Config'
 import { About } from './site/about/About'
+import { Rtt2 } from './site/rtt2/Rtt2'
+import { Vtr } from './site/vtr/Vtr'
 import { PageMachine } from './site/PageMachine'
 import App from './site/App'
 
@@ -25,7 +27,9 @@ class SiteManager {
     this.commonAction = new Common()
     this.pageMachine = new PageMachine({
       'top': new Top(),
-      'about': new About()
+      'about': new About(),
+      'rtt2': new Rtt2(),
+      'vtr': new Vtr()
     })
 
     this.router = new Router({
@@ -34,6 +38,12 @@ class SiteManager {
       },
       "/about/":()=>{
         this.pageMachine.changePage('about')
+      },
+      "/rtt2/":()=>{
+        this.pageMachine.changePage('rtt2')
+      },
+      "/vtr/":()=>{
+        this.pageMachine.changePage('vtr')
       }
     })
   }
