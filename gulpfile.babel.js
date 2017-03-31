@@ -44,7 +44,8 @@ gulp.task('webpack', () => {
     module: {
       loaders:[
         {test: /\.js$/, exclude: /node_modules|modules/, loaders: ['babel-loader', 'eslint-loader']},
-        {test: /\.(glsl|vs|fs)$/, loader: 'webpack-glsl'}
+        {test: /\.(glsl|vs|fs)$/, loader: 'webpack-glsl'},
+        {test: /\.json$/, loader: 'json-loader'},
       ]
     },
     worker: {

@@ -5,6 +5,12 @@ export function getRandomData( width, height, size ){
   return data
 }
 
+export function getSide(vertices){
+    var total = vertices.length;
+    var side = parseInt( Math.sqrt( total * 3 ) + .5 );
+    return side;
+}
+
 export function parseMesh(vertices){
     var total = vertices.length;
     var size = parseInt( Math.sqrt( total * 3 ) + .5 );

@@ -5,6 +5,7 @@ import Config from './site/Config'
 import { About } from './site/about/About'
 import { Rtt2 } from './site/rtt2/Rtt2'
 import { Vtr } from './site/vtr/Vtr'
+import { Human } from './site/human/Human'
 import { PageMachine } from './site/PageMachine'
 import App from './site/App'
 
@@ -29,7 +30,8 @@ class SiteManager {
       'top': new Top(),
       'about': new About(),
       'rtt2': new Rtt2(),
-      'vtr': new Vtr()
+      'vtr': new Vtr(),
+      'human': new Human(),
     })
 
     this.router = new Router({
@@ -44,6 +46,9 @@ class SiteManager {
       },
       "/vtr/":()=>{
         this.pageMachine.changePage('vtr')
+      },
+      "/human/":()=>{
+        this.pageMachine.changePage('human')
       }
     })
   }
