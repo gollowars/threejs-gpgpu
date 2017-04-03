@@ -6,6 +6,7 @@ import { About } from './site/about/About'
 import { Rtt2 } from './site/rtt2/Rtt2'
 import { Vtr } from './site/vtr/Vtr'
 import { Human } from './site/human/Human'
+import { Colors } from './site/colors/Colors'
 import { PageMachine } from './site/PageMachine'
 import App from './site/App'
 
@@ -32,6 +33,7 @@ class SiteManager {
       'rtt2': new Rtt2(),
       'vtr': new Vtr(),
       'human': new Human(),
+      'colors': new Colors()
     })
 
     this.router = new Router({
@@ -49,6 +51,9 @@ class SiteManager {
       },
       "/human/":()=>{
         this.pageMachine.changePage('human')
+      },
+      "/colors/":()=>{
+        this.pageMachine.changePage('colors')
       }
     })
   }
