@@ -2,11 +2,6 @@ import { Common } from './site/Common'
 import { Router } from './site/Router'
 import { Top } from './site/top/Top'
 import Config from './site/Config'
-import { About } from './site/about/About'
-import { Rtt2 } from './site/rtt2/Rtt2'
-import { Vtr } from './site/vtr/Vtr'
-import { Human } from './site/human/Human'
-import { Colors } from './site/colors/Colors'
 import { PageMachine } from './site/PageMachine'
 import App from './site/App'
 
@@ -28,32 +23,12 @@ class SiteManager {
 
     this.commonAction = new Common()
     this.pageMachine = new PageMachine({
-      'top': new Top(),
-      'about': new About(),
-      'rtt2': new Rtt2(),
-      'vtr': new Vtr(),
-      'human': new Human(),
-      'colors': new Colors()
+      'top': new Top()
     })
 
     this.router = new Router({
       "/":()=>{
         this.pageMachine.changePage('top')
-      },
-      "/about/":()=>{
-        this.pageMachine.changePage('about')
-      },
-      "/rtt2/":()=>{
-        this.pageMachine.changePage('rtt2')
-      },
-      "/vtr/":()=>{
-        this.pageMachine.changePage('vtr')
-      },
-      "/human/":()=>{
-        this.pageMachine.changePage('human')
-      },
-      "/colors/":()=>{
-        this.pageMachine.changePage('colors')
       }
     })
   }

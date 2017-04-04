@@ -1,12 +1,12 @@
 import { Page } from '../Page'
 import App from '../App'
-import StFBO1 from '../test-gpgpu/StFBO1'
+import MyVTF from '../test-gpgpu/MyVTF'
 
 export class Top extends Page {
   enter(){
     Logger.debug('Top:Enter!!')
 
-    this.testCanvas = new StFBO1()
+    this.testCanvas = new MyVTF()
     $(document).trigger(App.event.pageTranslateEnd)
   }
 

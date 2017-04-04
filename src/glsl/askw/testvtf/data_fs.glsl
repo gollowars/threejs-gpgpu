@@ -1,4 +1,4 @@
-//basic simulation: displays the particles in place.
+precision mediump float;
 varying vec3 vColor;
 void main() {
     // vec3 pos = texture2D( positions, vUv ).rgb;
