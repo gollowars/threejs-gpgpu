@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { makeSphere, makePlane } from './utils/MyGeometry'
 import { getRandomData } from './utils/Utils'
 import Particles from './Particles'
+import MoveParticles from './MoveParticles'
 
 ////////////////////////
 // Models
@@ -11,13 +12,9 @@ import Particles from './Particles'
 
 ////////////////////////
 // Shaders
-import vglsl from '../../../glsl/askw/testvtf/data_vs.glsl'
-import fglsl from '../../../glsl/askw/testvtf/data_fs.glsl'
 
-import simulationVertShader from '../../../glsl/askw/testvtf/simulation_vs.glsl'
-import simulationFragShader from '../../../glsl/askw/testvtf/simulation_fs.glsl'
-import renderVertShader from '../../../glsl/askw/testvtf/render_vs.glsl'
-import renderFragShader from '../../../glsl/askw/testvtf/render_fs.glsl'
+import renderVertShader from '../../../glsl/askw/moveParticle/render_vs.glsl'
+import renderFragShader from '../../../glsl/askw/moveParticle/render_fs.glsl'
 
 export default class MyVTF {
   constructor(){
@@ -50,7 +47,7 @@ export default class MyVTF {
     // Base Scene Rendering
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
-    this.camera.position.z = 20
+    this.camera.position.z = 520
     // this.controls = new THREE.OrbitControls(this.camera)
     // this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
 
@@ -62,24 +59,13 @@ export default class MyVTF {
     // gpgpu 用意
     let side = 60
     let sphereData = makeSphere(100.0, side*side)
-    let data = new Float32Array(sphereData)
-    let positions = new THREE.DataTexture(data, side, side, THREE.RGBFormat, THREE.FloatType)
-    let velocity = new THREE.DataTexture(data, side, side, THREE.RGBFormat, THREE.FloatType)
-    positions.needsUpdate = true
-
-
-    let simulationShader = new THREE.ShaderMaterial({
-      uniforms: {
-        positions: { type: "t", value: positions}
-      },
-      vertexShader: simulationVertShader,
-      fragmentShader: simulationFragShader
-    })
 
     let renderShader = new THREE.ShaderMaterial({
       uniforms:{
         positions:{ type: "t", value: null},
-        pointSize: { type: "t", value: 100}
+        pointSize: { type: "t", value: 100},
+        velocity: { type: "t", value: null},
+        time: { type: "f", value: null}
       },
       vertexShader: renderVertShader,
       fragmentShader: renderFragShader,
@@ -88,7 +74,7 @@ export default class MyVTF {
     })
 
 
-    this.particleObj = new Particles(sphereData ,this.renderer, renderShader)
+    this.particleObj = new MoveParticles(sphereData ,this.renderer, renderShader)
     this.scene.add( this.particleObj.particles )
 
 
@@ -111,7 +97,7 @@ export default class MyVTF {
     // Logger.debug('delta :',delta)
     // Logger.debug('time :',time)
 
-    this.particleObj.update()
+    this.particleObj.update(time)
     // this.camera.rotation.y += Math.PI/180 * 1
     this.renderer.render(this.scene, this.camera)
   }
