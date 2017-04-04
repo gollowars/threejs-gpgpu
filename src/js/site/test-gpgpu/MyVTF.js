@@ -42,13 +42,15 @@ export default class MyVTF {
     this.w = $(window).width()
     this.h = $(window).height()
 
+    this.clock = new THREE.Clock()
+
     let w = this.w
     let h = this.h
 
     // Base Scene Rendering
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
-    this.camera.position.z = 50
+    this.camera.position.z = 20
     // this.controls = new THREE.OrbitControls(this.camera)
     // this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
 
@@ -58,9 +60,10 @@ export default class MyVTF {
 
 
     // gpgpu 用意
-    let side = 256
-    let data = new Float32Array(makeSphere(10.0, side*side))
+    let side = 60
+    let data = new Float32Array(makeSphere(100.0, side*side))
     let positions = new THREE.DataTexture(data, side, side, THREE.RGBFormat, THREE.FloatType)
+    let velocity = new THREE.DataTexture(data, side, side, THREE.RGBFormat, THREE.FloatType)
     positions.needsUpdate = true
 
 
@@ -75,7 +78,7 @@ export default class MyVTF {
     let renderShader = new THREE.ShaderMaterial({
       uniforms:{
         positions:{ type: "t", value: null},
-        pointSizse: { type: "t", value: 2}
+        pointSize: { type: "t", value: 100}
       },
       vertexShader: renderVertShader,
       fragmentShader: renderFragShader,
@@ -87,6 +90,8 @@ export default class MyVTF {
     this.particleObj = new Particles(side, side ,this.renderer, simulationShader, renderShader)
     this.scene.add( this.particleObj.particles )
 
+
+    this.last = window.performance.now()
     window.addEventListener('resize',()=>{this.onResize()})
     this.onResize()
     this.update()
@@ -94,7 +99,17 @@ export default class MyVTF {
 
 
   render(){
+    let now = window.performance.now()
+    let delta = (now - this.last) / 1000
+    if (delta > 1) delta = 1
+    let time = now/1000
+    this.last = now
+    // Logger.debug('now :',now)
+    // Logger.debug('delta :',delta)
+    // Logger.debug('time :',time)
+
     this.particleObj.update()
+    // this.camera.rotation.y += Math.PI/180 * 1
     this.renderer.render(this.scene, this.camera)
   }
 

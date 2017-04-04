@@ -40,6 +40,7 @@ export default class Particles {
     let geometry = new THREE.BufferGeometry()
     geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([   -1,-1,0, 1,-1,0, 1,1,0, -1,-1, 0, 1, 1, 0, -1,1,0 ]), 3 ) )
     geometry.addAttribute( 'uv', new THREE.BufferAttribute( new Float32Array([   0,1, 1,1, 1,0,     0,1, 1,0, 0,0 ]), 2 ) )
+    geometry.computeBoundingSphere()
     this.scene.add( new THREE.Mesh( geometry, this.simulationShader))
 
     let l = (this.width * this.height )
