@@ -40,7 +40,7 @@ export default class MyVTF {
 
     // Base Scene Rendering
     this.scene = new THREE.Scene()
-    this.camera = new THREE.OrthographicCamera(-1,1,1,-1,1/Math.pow( 2, 53 ),1 )
+    this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
     this.camera.position.z = 2
     // this.controls = new THREE.OrbitControls(this.camera)
     // this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
@@ -82,7 +82,7 @@ export default class MyVTF {
     let simulationShader = new THREE.ShaderMaterial({
       uniforms:{
         side: { type :'f', value: sideValue },
-        quality: { type: 'f', value: 1.0 }
+        quality: { type: 'f', value: 10.0 }
       },
       vertexShader: vglsl,
       fragmentShader: fglsl
