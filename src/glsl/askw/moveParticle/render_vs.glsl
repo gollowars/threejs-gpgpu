@@ -14,7 +14,10 @@ void main() {
     vec3 vel = texture2D( velocity, position.xy ).xyz;
     pos += vel*time;
     //pos now contains the position of a point in space taht can be transformed
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
+    vec4 distPosition =  modelViewMatrix * vec4( pos, 1.0 );
 
-    gl_PointSize = pointSize;
+    float size = pointSize * (100.0 / length(distPosition.xyz));
+
+    gl_PointSize = size;
+    gl_Position = projectionMatrix * distPosition;
 }

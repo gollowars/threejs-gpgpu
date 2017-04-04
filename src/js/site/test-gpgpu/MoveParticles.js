@@ -5,8 +5,7 @@ export default class MoveParticles extends Particles {
 
   init(){
     super.init()
-    this.velocityTexture = new DataTexture(this.data, this.renderer)
-    this.particles.material.uniforms.velocity.value = this.velocityTexture.getTexture()
+    
   }
 
   update(time){

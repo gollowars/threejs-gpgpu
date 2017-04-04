@@ -5,6 +5,7 @@ import { makeSphere, makePlane } from './utils/MyGeometry'
 import { getRandomData } from './utils/Utils'
 import Particles from './Particles'
 import MoveParticles from './MoveParticles'
+import DataTexture from './DataTexture'
 
 ////////////////////////
 // Models
@@ -59,12 +60,15 @@ export default class MyVTF {
     // gpgpu 用意
     let side = 60
     let sphereData = makeSphere(100.0, side*side)
+    let velocityData = makeSphere(100.0, side*side)
+
+    let velocityTexture = new DataTexture(velocityData, this.renderer)
 
     let renderShader = new THREE.ShaderMaterial({
       uniforms:{
         positions:{ type: "t", value: null},
-        pointSize: { type: "t", value: 100},
-        velocity: { type: "t", value: null},
+        pointSize: { type: "t", value: 80},
+        velocity: { type: "t", value: velocityTexture.getTexture()},
         time: { type: "f", value: null}
       },
       vertexShader: renderVertShader,
