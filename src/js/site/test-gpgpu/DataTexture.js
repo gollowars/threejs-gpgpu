@@ -1,10 +1,22 @@
-export default class DataTexture {
-  constructor( width, height, renderer, simulationShader ){
-    this.width = width
-    this.height = height
-    this.renderer = renderer
-    this.simulationShader = simulationShader
+import simulationVertShader from '../../../glsl/askw/testvtf/simulation_vs.glsl'
+import simulationFragShader from '../../../glsl/askw/testvtf/simulation_fs.glsl'
 
+export default class DataTexture {
+  constructor( data, renderer ){
+    this.width = Math.sqrt(data.length/3)
+    this.height = Math.sqrt(data.length/3)
+    this.renderer = renderer
+
+    let data32 = new Float32Array(data)
+    let positions = new THREE.DataTexture(data32, this.width, this.height, THREE.RGBFormat, THREE.FloatType)
+    positions.needsUpdate = true
+    this.simulationShader = new THREE.ShaderMaterial({
+      uniforms: {
+        positions: { type: "t", value: positions}
+      },
+      vertexShader: simulationVertShader,
+      fragmentShader: simulationFragShader
+    })
 
     this.scene = null
     this.camera = null

@@ -1,11 +1,15 @@
 import DataTexture from './DataTexture'
 
 export default class Particles {
-  constructor( width, height, renderer, simulationShader, renderShader ){
-    this.width = width
-    this.height = height
+  constructor( data, renderer, renderShader ){
+    this.vertices = data
+    this.width = Math.sqrt(this.vertices.length/3)
+    this.height = Math.sqrt(this.vertices.length/3)
     this.renderer = renderer
-    this.simulationShader = simulationShader
+
+    
+
+    // this.simulationShader = simulationShader
     this.renderShader = renderShader
 
 
@@ -19,8 +23,7 @@ export default class Particles {
   }
 
   init(){
-    Logger.debug(DataTexture)
-    this.dataTexture = new DataTexture(this.width, this.height, this.renderer,this.simulationShader)
+    this.dataTexture = new DataTexture(this.vertices, this.renderer)
 
     let l = (this.width * this.height )
     let vertices = new Float32Array( l * 3 )

@@ -61,7 +61,8 @@ export default class MyVTF {
 
     // gpgpu 用意
     let side = 60
-    let data = new Float32Array(makeSphere(100.0, side*side))
+    let sphereData = makeSphere(100.0, side*side)
+    let data = new Float32Array(sphereData)
     let positions = new THREE.DataTexture(data, side, side, THREE.RGBFormat, THREE.FloatType)
     let velocity = new THREE.DataTexture(data, side, side, THREE.RGBFormat, THREE.FloatType)
     positions.needsUpdate = true
@@ -87,7 +88,7 @@ export default class MyVTF {
     })
 
 
-    this.particleObj = new Particles(side, side ,this.renderer, simulationShader, renderShader)
+    this.particleObj = new Particles(sphereData ,this.renderer, renderShader)
     this.scene.add( this.particleObj.particles )
 
 
@@ -104,6 +105,8 @@ export default class MyVTF {
     if (delta > 1) delta = 1
     let time = now/1000
     this.last = now
+
+
     // Logger.debug('now :',now)
     // Logger.debug('delta :',delta)
     // Logger.debug('time :',time)
