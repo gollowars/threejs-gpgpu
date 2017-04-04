@@ -2,6 +2,7 @@
 // Utils
 import _ from 'lodash'
 import { makeSphere, makePlane } from './utils/MyGeometry'
+import { getRandomData } from './utils/Utils'
 ////////////////////////
 // Models
 
@@ -11,6 +12,10 @@ import { makeSphere, makePlane } from './utils/MyGeometry'
 import vglsl from '../../../glsl/askw/testvtf/data_vs.glsl'
 import fglsl from '../../../glsl/askw/testvtf/data_fs.glsl'
 
+import simulationVertShader from '../../../glsl/askw/testvtf/simulation_vs.glsl'
+import simulationFragShader from '../../../glsl/askw/testvtf/simulation_fs.glsl'
+import renderVertShader from '../../../glsl/askw/testvtf/render_vs.glsl'
+import renderFragShader from '../../../glsl/askw/testvtf/render_fs.glsl'
 
 export default class MyVTF {
   constructor(){
@@ -41,13 +46,40 @@ export default class MyVTF {
     // Base Scene Rendering
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
-    this.camera.position.z = 2
+    this.camera.position.z = 50
     // this.controls = new THREE.OrbitControls(this.camera)
     // this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true })
     this.renderer.setSize(w,h)
     $('#pageContainer').append(this.renderer.domElement)
+
+
+    // gpgpu 用意
+    let side = 256
+    let data = new Float32Array(makeSphere(10.0, side*side))
+    let positions = new THREE.DataTexture(data, side, side, THREE.RGBFormat, THREE.FloatType)
+    positions.needsUpdate = true
+
+
+    let simulationShader = new THREE.ShaderMaterial({
+      uniforms: {
+        positions: { type: "t", value: positions}
+      },
+      vertexShader: simulationVertShader,
+      fragmentShader: simulationFragShader
+    })
+
+    let renderShader = new THREE.ShaderMaterial({
+      uniforms:{
+        positions:{ type: "t", value: null},
+        pointSizse: { type: "t", value: 2}
+      },
+      vertexShader: renderVertShader,
+      fragmentShader: renderFragShader,
+      transparent: true,
+      blending: THREE.AdditiveBlending
+    })
 
     // vertexshaderからtextureが利用できるかcheck
     let gl = this.renderer.getContext()
@@ -56,50 +88,42 @@ export default class MyVTF {
       console.log('cannot use vertex texture image unit')
     }
 
-    let radius = 3
-    let size = 256
-
-
-    let positionArray = makeSphere(radius, size)
-    let position = new Float32Array(positionArray)
-    let indicesArray = []
-    for(let i = 0;i<positionArray.length/3;i++){
-      indicesArray.push(i)
+    if( gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) == 0 ) {
+      throw new Error( "vertex shader cannot read textures" );
     }
 
-    let indices = new Float32Array( indicesArray )
-    let bufferGeometry = new THREE.BufferGeometry()
-    bufferGeometry.addAttribute( 'position', new THREE.BufferAttribute( position, 3 ))
-    bufferGeometry.addAttribute( 'vertexIndex', new THREE.BufferAttribute(new Uint16Array(indices), 1))
-    bufferGeometry.setIndex( new THREE.BufferAttribute(new Uint16Array(indices), 1))
+    let rttScene = new THREE.Scene()
+    let rttCamera = new THREE.OrthographicCamera(-1,1,1,-1,1/Math.pow( 2, 53 ),1 )
+    var options = {
+            minFilter: THREE.NearestFilter,//important as we want to sample square pixels
+            magFilter: THREE.NearestFilter,//
+            format: THREE.RGBFormat,//could be RGBAFormat
+            type:THREE.FloatType//important as we need precise coordinates (not ints)
+        };
+    let rtt = new THREE.WebGLRenderTarget( side,side, options)
 
-    // 表示判定
-    bufferGeometry.computeBoundingSphere()
+    let rttgeom = new THREE.BufferGeometry()
+    rttgeom.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array([   -1,-1,0, 1,-1,0, 1,1,0, -1,-1, 0, 1, 1, 0, -1,1,0 ]), 3 ) )
+    rttgeom.addAttribute( 'uv', new THREE.BufferAttribute( new Float32Array([   0,1, 1,1, 1,0,     0,1, 1,0, 0,0 ]), 2 ) )
+    rttScene.add( new THREE.Mesh( rttgeom, simulationShader))
+    // rttgeom.computeBoundingSphere()
 
-    let sideValue = Math.sqrt(size)
-    Logger.debug( 'sideValue:',sideValue )
+    let l = (side * side )
+    let vertices = new Float32Array( l * 3 )
+    for ( let i = 0; i < l; i++ ) {
+      let i3 = i * 3
+      vertices[ i3 ] = ( i % side ) / side 
+      vertices[ i3 + 1 ] = ( i / side ) / side
+    }
 
-    let simulationShader = new THREE.ShaderMaterial({
-      uniforms:{
-        side: { type :'f', value: sideValue },
-        quality: { type: 'f', value: 10.0 }
-      },
-      vertexShader: vglsl,
-      fragmentShader: fglsl
-    })
+    let particleGeo = new THREE.BufferGeometry()
+    particleGeo.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3))
+    let particles = new THREE.Points( particleGeo, renderShader )
 
+    this.renderer.render( rttScene, rttCamera, rtt, true )
+    particles.material.uniforms.positions.value = rtt
 
-    this.mesh = new THREE.Points( bufferGeometry, simulationShader)
-    Logger.debug(this.mesh.material)
-
-    this.scene.add( this.mesh )
-
-
-    // let geometry = new THREE.BufferGeometry()
-    // geometry.addAttribute('position', new THREE.BufferAttribute(vertices , 3))
-    // let material = new THREE.MeshBasicMaterial( { color : 0xff0000 })
-    // let mesh = new THREE.Points( geometry, material )
-    // this.scene.add( mesh )
+    this.scene.add( particles )
 
     window.addEventListener('resize',()=>{this.onResize()})
     this.onResize()
@@ -111,6 +135,7 @@ export default class MyVTF {
     // this.mesh.rotation.x += Math.PI/180 * 1
     // this.mesh.rotation.y += Math.PI/180 * 1
     // this.mesh.rotation.z += Math.PI/180 * 1
+    // FBO.update()
 
     this.renderer.render(this.scene, this.camera)
   }
