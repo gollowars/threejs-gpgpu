@@ -1,7 +1,7 @@
 ////////////////////////
 // Utils
 import _ from 'lodash'
-import { makeSphere, makePlane } from './utils/MyGeometry'
+import { makeSphere, makeGrand, makeInnerSphere,makeColors } from './utils/MyGeometry'
 import { getRandomData } from './utils/Utils'
 import Particles from './Particles'
 import MoveParticles from './MoveParticles'
@@ -47,38 +47,42 @@ export default class MyVTF {
 
     // Base Scene Rendering
     this.scene = new THREE.Scene()
+    // this.scene.background = new THREE.Color( 0xffffff )
     this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
-    this.camera.position.z = 520
+    this.camera.position.z = 100
     // this.controls = new THREE.OrbitControls(this.camera)
     // this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true })
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true})
     this.renderer.setSize(w,h)
     $('#pageContainer').append(this.renderer.domElement)
 
 
     // gpgpu 用意
-    let side = 60
-    let sphereData = makeSphere(100.0, side*side)
-    let velocityData = makeSphere(100.0, side*side)
-
+    let side = 126
+    let verticalData = getRandomData(side, side, 300)
+    let velocityData = makeInnerSphere(3.0, side*side)
+    let colorData = makeColors(side*side)
     let velocityTexture = new DataTexture(velocityData, this.renderer)
+    let colorDataTexture = new DataTexture(colorData, this.renderer)
 
     let renderShader = new THREE.ShaderMaterial({
       uniforms:{
         positions:{ type: "t", value: null},
-        pointSize: { type: "t", value: 80},
+        pointSize: { type: "t", value: 40},
         velocity: { type: "t", value: velocityTexture.getTexture()},
-        time: { type: "f", value: null}
+        time: { type: "f", value: null},
+        colors: { type: "f", value: colorDataTexture.getTexture() },
+        alpha: { type: "f", value: 0.4 }
       },
       vertexShader: renderVertShader,
       fragmentShader: renderFragShader,
-      transparent: true,
-      blending: THREE.AdditiveBlending
+      // blending: THREE.AdditiveBlending,
+      transparent: true
     })
 
 
-    this.particleObj = new MoveParticles(sphereData ,this.renderer, renderShader)
+    this.particleObj = new MoveParticles(verticalData ,this.renderer, renderShader)
     this.scene.add( this.particleObj.particles )
 
 
@@ -90,6 +94,8 @@ export default class MyVTF {
 
 
   render(){
+    // this.renderer.setClearColor( { color: 0xffffff })
+    // this.scene.background = new THREE.Color( 0xffffff )
     let now = window.performance.now()
     let delta = (now - this.last) / 1000
     if (delta > 1) delta = 1

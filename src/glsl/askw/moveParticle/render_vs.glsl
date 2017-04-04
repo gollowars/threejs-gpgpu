@@ -2,14 +2,18 @@
 //float texture containing the positions of each particle
 uniform sampler2D positions;
 uniform sampler2D velocity;
+uniform sampler2D colors;
 uniform float time;
 
+varying vec3 vColor;
 //size
 uniform float pointSize;
 
 void main() {
 
     //the mesh is a nomrliazed square so the uvs = the xy positions of the vertices
+    vec3 color = texture2D( colors, position.xy ).xyz;
+    vColor = color;
     vec3 pos = texture2D( positions, position.xy ).xyz;
     vec3 vel = texture2D( velocity, position.xy ).xyz;
     pos += vel*time;
