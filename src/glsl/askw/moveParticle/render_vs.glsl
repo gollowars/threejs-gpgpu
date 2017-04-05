@@ -4,6 +4,7 @@ uniform sampler2D positions;
 uniform sampler2D velocity;
 uniform sampler2D colors;
 uniform float time;
+uniform float speed;
 
 varying vec3 vColor;
 //size
@@ -16,6 +17,7 @@ void main() {
     vColor = color;
     vec3 pos = texture2D( positions, position.xy ).xyz;
     vec3 vel = texture2D( velocity, position.xy ).xyz;
+    vel *= vec3(speed);
     pos += vel*time;
     //pos now contains the position of a point in space taht can be transformed
     vec4 distPosition =  modelViewMatrix * vec4( pos, 1.0 );

@@ -17,6 +17,16 @@ import DataTexture from './DataTexture'
 import renderVertShader from '../../../glsl/askw/moveParticle/render_vs.glsl'
 import renderFragShader from '../../../glsl/askw/moveParticle/render_fs.glsl'
 
+
+////////////////////////
+// Params
+class Params {
+  constructor(){
+    this.alpha = 0.7
+    this.speed = 5.0
+  }
+}
+
 export default class MyVTF {
   constructor(){
 
@@ -25,10 +35,20 @@ export default class MyVTF {
     this.renderer = null
     this.startTime = new Date()
     this.animationID = null
-
     this.scale = 10
 
+    this.params = null
+    this.gui = null
+
+    this.guiInit()
     this.init()
+  }
+
+  guiInit(){
+    this.params = new Params()
+    this.gui = new dat.GUI()
+    this.gui.add(this.params, 'alpha', 0, 1.0)
+    this.gui.add(this.params, 'speed', 0, 20.0)
   }
 
   init(){
@@ -47,6 +67,8 @@ export default class MyVTF {
 
     // Base Scene Rendering
     this.scene = new THREE.Scene()
+    this.scene.background = new THREE.Color( 0xffffff )
+
     // this.scene.background = new THREE.Color( 0xffffff )
     this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
     this.camera.position.z = 100
@@ -59,9 +81,9 @@ export default class MyVTF {
 
 
     // gpgpu 用意
-    let side = 126
+    let side = 126/2
     let verticalData = getRandomData(side, side, 300)
-    let velocityData = makeInnerSphere(3.0, side*side)
+    let velocityData = makeInnerSphere(1, side*side)
     let colorData = makeColors(side*side)
     let velocityTexture = new DataTexture(velocityData, this.renderer)
     let colorDataTexture = new DataTexture(colorData, this.renderer)
@@ -73,7 +95,8 @@ export default class MyVTF {
         velocity: { type: "t", value: velocityTexture.getTexture()},
         time: { type: "f", value: null},
         colors: { type: "f", value: colorDataTexture.getTexture() },
-        alpha: { type: "f", value: 0.4 }
+        alpha: { type: "f", value: this.params.alpha },
+        speed: { type: "f", value: this.params.speed }
       },
       vertexShader: renderVertShader,
       fragmentShader: renderFragShader,
@@ -81,7 +104,7 @@ export default class MyVTF {
       transparent: true
     })
 
-
+    this.renderShader = renderShader
     this.particleObj = new MoveParticles(verticalData ,this.renderer, renderShader)
     this.scene.add( this.particleObj.particles )
 
@@ -95,7 +118,6 @@ export default class MyVTF {
 
   render(){
     // this.renderer.setClearColor( { color: 0xffffff })
-    // this.scene.background = new THREE.Color( 0xffffff )
     let now = window.performance.now()
     let delta = (now - this.last) / 1000
     if (delta > 1) delta = 1
@@ -106,10 +128,15 @@ export default class MyVTF {
     // Logger.debug('now :',now)
     // Logger.debug('delta :',delta)
     // Logger.debug('time :',time)
-
+    this.updateRenderShader(time)
     this.particleObj.update(time)
     // this.camera.rotation.y += Math.PI/180 * 1
     this.renderer.render(this.scene, this.camera)
+  }
+
+  updateRenderShader(time){
+    this.renderShader.uniforms.alpha.value = this.params.alpha
+    this.renderShader.uniforms.speed.value = this.params.speed
   }
 
 
