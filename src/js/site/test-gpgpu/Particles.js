@@ -24,14 +24,21 @@ export default class Particles {
 
     let l = (this.width * this.height )
     let vertices = new Float32Array( l * 3 )
+    let myIndices = new Uint16Array( l )
     for ( let i = 0; i < l; i++ ) {
       let i3 = i * 3
       vertices[ i3 ] = ( i % this.width ) / this.width 
       vertices[ i3 + 1 ] = ( i / this.height ) / this.height
+
+      myIndices[i] = i
     }
+
+    
+
 
     let particleGeo = new THREE.BufferGeometry()
     particleGeo.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3))
+    particleGeo.setIndex( new THREE.BufferAttribute( myIndices, 1))
     this.particles = new THREE.Points( particleGeo, this.renderShader )
 
   }

@@ -6,6 +6,7 @@ import { getRandomData, parseMesh } from './utils/Utils'
 import Particles from './Particles'
 import MoveParticles from './MoveParticles'
 import DataTexture from './DataTexture'
+import SimplexNoise from 'simplex-noise'
 
 ////////////////////////
 // Models
@@ -51,7 +52,7 @@ export default class MyVTF {
   guiInit(){
     this.params = new Params()
     this.gui = new dat.GUI()
-    this.gui.add(this.params, 'alpha', 0, 1.0)
+    this.gui.add(this.params, 'alpha', 0, 0.5)
     this.gui.add(this.params, 'speed', 0, 20.0)
     this.gui.add(this.params, 'mix', 0.0, 1.0)
     this.gui.add(this.params, 'humanSize', 0, 1000.0)
@@ -73,11 +74,10 @@ export default class MyVTF {
 
     // Base Scene Rendering
     this.scene = new THREE.Scene()
-    // this.scene.background = new THREE.Color( 0xffffff )
+    this.scene.background = new THREE.Color( 0xffffff )
 
-    // this.scene.background = new THREE.Color( 0xffffff )
-    this.camera = new THREE.PerspectiveCamera(60,w/h, 1,1000 )
-    this.camera.position.z = 220
+    this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
+    this.camera.position.z = 180
     // this.controls = new THREE.OrbitControls(this.camera)
     // this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
 
@@ -101,7 +101,7 @@ export default class MyVTF {
     // gpgpu 用意
     // let side = 126/2
 
-    let verticalData = getRandomData(side, side, 500)
+    let verticalData = makeInnerSphere( 500, side*side )
     let velocityData = makeInnerSphere(1, side*side)
     let colorData = makeColors(side*side)
     let velocityTexture = new DataTexture(velocityData, this.renderer)
@@ -112,7 +112,7 @@ export default class MyVTF {
       uniforms:{
         positions:{ type: "t", value: null},
         modelPosition:  { type : "t", value: modelDataTexture.getTexture() },
-        pointSize: { type: "t", value: 20},
+        pointSize: { type: "t", value: 5},
         velocity: { type: "t", value: velocityTexture.getTexture()},
         time: { type: "f", value: null},
         colors: { type: "f", value: colorDataTexture.getTexture() },
@@ -120,6 +120,7 @@ export default class MyVTF {
         speed: { type: "f", value: this.params.speed },
         mixAmount: { type: "f", value : this.params.mix },
         humanSize: { type: "f", value : this.params.humanSize },
+        amplitude: { type: "f", value : 1.0 },
         nearFar: { type: "v2", value:new THREE.Vector2( 150, 500 ) }
       },
       vertexShader: renderVertShader,
@@ -160,7 +161,7 @@ export default class MyVTF {
 
     let rotationAmount = 1.0 - this.params.mix
     this.particleObj.particles.rotation.z = (Math.PI/180* time*2.0)*rotationAmount
-    this.particleObj.particles.rotation.y = (Math.PI/180* time*2.0)*rotationAmount + (Math.PI/180* 45)
+    this.particleObj.particles.rotation.y = (Math.PI/180* time*2.0)*rotationAmount
 
     this.particleObj.update(time)
     // this.camera.rotation.y += Math.PI/180 * 1
@@ -168,10 +169,8 @@ export default class MyVTF {
   }
 
   onclickHandler(){
-    Logger.debug('onclick!')
-    Logger.debug(TWEEN)
     let tween = new TWEEN.Tween(this.params)
-    .to( { mix: 1.0 }, 1000 )
+    .to( { mix: 1.0 }, 2000 )
     .easing( TWEEN.Easing.Quadratic.InOut )
     .onComplete(function(){
       tween.stop()
@@ -184,6 +183,7 @@ export default class MyVTF {
     this.renderShader.uniforms.speed.value = this.params.speed
     this.renderShader.uniforms.mixAmount.value = this.params.mix
     this.renderShader.uniforms.humanSize.value = this.params.humanSize
+    this.renderShader.uniforms.amplitude.value = 2.5 * Math.sin(time * 0.125)
   }
 
 
@@ -194,7 +194,6 @@ export default class MyVTF {
   }
 
   onResize(){
-    Logger.debug("onResize")
     
     this.w = $(window).width()
     this.h = $(window).height()
