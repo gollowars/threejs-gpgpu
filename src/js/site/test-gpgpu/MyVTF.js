@@ -26,7 +26,7 @@ class Params {
   constructor(){
     this.alpha = 0.9
     this.speed = 5.0
-    this.mix = 0.1
+    this.mix = 0.0
     this.humanSize = 700.0
   }
 }
@@ -53,7 +53,7 @@ export default class MyVTF {
     this.gui = new dat.GUI()
     this.gui.add(this.params, 'alpha', 0, 1.0)
     this.gui.add(this.params, 'speed', 0, 20.0)
-    this.gui.add(this.params, 'mix', 0.0, 0.994)
+    this.gui.add(this.params, 'mix', 0.0, 1.0)
     this.gui.add(this.params, 'humanSize', 0, 1000.0)
   }
 
@@ -73,7 +73,7 @@ export default class MyVTF {
 
     // Base Scene Rendering
     this.scene = new THREE.Scene()
-    this.scene.background = new THREE.Color( 0xffffff )
+    // this.scene.background = new THREE.Color( 0xffffff )
 
     // this.scene.background = new THREE.Color( 0xffffff )
     this.camera = new THREE.PerspectiveCamera(60,w/h, 1,1000 )
@@ -112,7 +112,7 @@ export default class MyVTF {
       uniforms:{
         positions:{ type: "t", value: null},
         modelPosition:  { type : "t", value: modelDataTexture.getTexture() },
-        pointSize: { type: "t", value: 40},
+        pointSize: { type: "t", value: 20},
         velocity: { type: "t", value: velocityTexture.getTexture()},
         time: { type: "f", value: null},
         colors: { type: "f", value: colorDataTexture.getTexture() },
@@ -160,7 +160,7 @@ export default class MyVTF {
 
     let rotationAmount = 1.0 - this.params.mix
     this.particleObj.particles.rotation.z = (Math.PI/180* time*2.0)*rotationAmount
-    // this.particleObj.particles.rotation.y = (Math.PI/180* time*2.0)*rotationAmount
+    this.particleObj.particles.rotation.y = (Math.PI/180* time*2.0)*rotationAmount + (Math.PI/180* 45)
 
     this.particleObj.update(time)
     // this.camera.rotation.y += Math.PI/180 * 1
@@ -171,7 +171,7 @@ export default class MyVTF {
     Logger.debug('onclick!')
     Logger.debug(TWEEN)
     let tween = new TWEEN.Tween(this.params)
-    .to( { mix:0.99 }, 1000 )
+    .to( { mix: 1.0 }, 1000 )
     .easing( TWEEN.Easing.Quadratic.InOut )
     .onComplete(function(){
       tween.stop()

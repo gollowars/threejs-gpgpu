@@ -10,6 +10,7 @@ export default class MoveParticles extends Particles {
 
   update(time){
     this.particles.material.uniforms.positions.value = this.dataTexture.getTexture()
+    Logger.debug('time:',time)
     this.particles.material.uniforms.time.value = time
   }
 }
