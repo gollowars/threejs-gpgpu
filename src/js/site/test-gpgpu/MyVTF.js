@@ -17,14 +17,16 @@ import humanModel from '../../../models/human3.json'
 import renderVertShader from '../../../glsl/askw/moveParticle/render_vs.glsl'
 import renderFragShader from '../../../glsl/askw/moveParticle/render_fs.glsl'
 
+import renderVertShader2 from '../../../glsl/askw/mesh/render_vs.glsl'
+import renderFragShader2 from '../../../glsl/askw/mesh/render_fs.glsl'
 
 ////////////////////////
 // Params
 class Params {
   constructor(){
     this.alpha = 0.7
-    this.speed = 5.0
-    this.mix = 0.0
+    this.speed = 0.0
+    this.mix = 1.0
     this.humanSize = 700.0
   }
 }
@@ -71,11 +73,11 @@ export default class MyVTF {
 
     // Base Scene Rendering
     this.scene = new THREE.Scene()
-    this.scene.background = new THREE.Color( 0xffffff )
+    // this.scene.background = new THREE.Color( 0xffffff )
 
     // this.scene.background = new THREE.Color( 0xffffff )
     this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
-    this.camera.position.z = 100
+    this.camera.position.z = 220
     // this.controls = new THREE.OrbitControls(this.camera)
     // this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
 
@@ -89,10 +91,13 @@ export default class MyVTF {
     Logger.debug(model.geometry)
     let modelVertices = model.geometry.vertices
     let modelDataArray = parseMesh(modelVertices)
-    let modelData = new Float32Array( modelDataArray )
-    let side = Math.sqrt(modelDataArray.length / 3)
-    let dataTexture = new DataTexture(modelData, this.renderer)
 
+    let modelData = new Float32Array( modelDataArray )
+    // Logger.debug(modelDataArray[modelDataArray.length])
+    Logger.debug(modelDataArray.length)
+    let side = Math.sqrt(modelDataArray.length / 3)
+    let modelDataTexture = new DataTexture(modelData, this.renderer)
+    Logger.debug('modelDataTexture.positions:',modelDataTexture.positions)
     // gpgpu 用意
     // let side = 126/2
 
@@ -106,15 +111,16 @@ export default class MyVTF {
     let renderShader = new THREE.ShaderMaterial({
       uniforms:{
         positions:{ type: "t", value: null},
-        modelPosition:  { type : "t", value: dataTexture},
-        pointSize: { type: "t", value: 20},
+        modelPosition:  { type : "t", value: modelDataTexture.getTexture() },
+        pointSize: { type: "t", value: 2},
         velocity: { type: "t", value: velocityTexture.getTexture()},
         time: { type: "f", value: null},
         colors: { type: "f", value: colorDataTexture.getTexture() },
         alpha: { type: "f", value: this.params.alpha },
         speed: { type: "f", value: this.params.speed },
         mixAmount: { type: "f", value : this.params.mix },
-        humanSize: { type: "f", value : this.params.humanSize }
+        humanSize: { type: "f", value : this.params.humanSize },
+        nearFar: { type: "v2", value:new THREE.Vector2( 150, 500 ) }
       },
       vertexShader: renderVertShader,
       fragmentShader: renderFragShader,
@@ -123,7 +129,7 @@ export default class MyVTF {
     })
 
     this.renderShader = renderShader
-    this.particleObj = new MoveParticles(verticalData ,this.renderer, renderShader)
+    this.particleObj = new MoveParticles(verticalData ,this.renderer, this.renderShader)
     this.scene.add( this.particleObj.particles )
 
 

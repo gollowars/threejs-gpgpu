@@ -8,11 +8,11 @@ export default class DataTexture {
     this.renderer = renderer
 
     let data32 = new Float32Array(data)
-    let positions = new THREE.DataTexture(data32, this.width, this.height, THREE.RGBFormat, THREE.FloatType)
-    positions.needsUpdate = true
+    this.positions = new THREE.DataTexture(data32, this.width, this.height, THREE.RGBFormat, THREE.FloatType)
+    this.positions.needsUpdate = true
     this.simulationShader = new THREE.ShaderMaterial({
       uniforms: {
-        positions: { type: "t", value: positions}
+        positions: { type: "t", value: this.positions}
       },
       vertexShader: simulationVertShader,
       fragmentShader: simulationFragShader

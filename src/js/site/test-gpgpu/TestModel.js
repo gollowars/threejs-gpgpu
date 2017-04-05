@@ -13,8 +13,8 @@ import humanModel from '../../../models/human3.json'
 import dataVs from '../../../glsl/askw/testvtf/data_vs.glsl'
 import dataFs from '../../../glsl/askw/testvtf/data_fs.glsl'
 
-import simuVs from '../../../glsl/mesh/simulation_vs.glsl'
-import simuFs from '../../../glsl/mesh/simulation_fs.glsl'
+import simuVs from '../../../glsl/askw/testvtf/simulation_vs.glsl'
+import simuFs from '../../../glsl/askw/testvtf/simulation_fs.glsl'
 
 import renderVs from '../../../glsl/mesh/render_vs.glsl'
 import renderFs from '../../../glsl/mesh/render_fs.glsl'
@@ -48,7 +48,7 @@ export default class TestModel {
     // Base Scene Rendering
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 );
-    this.camera.position.z = 3
+    this.camera.position.z = 20
     this.controls = new THREE.OrbitControls(this.camera)
     this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
 
@@ -64,10 +64,12 @@ export default class TestModel {
 
     let vertices = model.geometry.vertices
     let data = parseMesh(vertices)
+    Logger.debug(data[data.length-1])
     data = data.map(function(point){return point*10})
     this.originalVertices = vertices
     let size = Math.sqrt( data.length / 3)
-    let positions = new THREE.DataTexture(data,size,size,THREE.RGBFormat, THREE.FloatType )
+
+    let positions = new THREE.DataTexture(new Float32Array( data ),size,size,THREE.RGBFormat, THREE.FloatType )
     positions.needsUpdate = true
 
     // let sphereRandVertices = getRandomData( size, size, 256 )
@@ -136,10 +138,10 @@ export default class TestModel {
     data = data.map(function(point){return (point*scale) + (Math.random()*maxRand*Math.sin(count))})
 
     let size = Math.sqrt( data.length / 3)
-    let positions = new THREE.DataTexture(data,size,size,THREE.RGBFormat, THREE.FloatType)
+    let positions = new THREE.DataTexture(new Float32Array( data ),size,size,THREE.RGBFormat, THREE.FloatType)
     positions.needsUpdate = true
 
-    this.simShader.uniforms.positions.value = positions
+    // this.simShader.uniforms.positions.value = positions
   }
 
   update(){
