@@ -24,9 +24,9 @@ import renderFragShader2 from '../../../glsl/askw/mesh/render_fs.glsl'
 // Params
 class Params {
   constructor(){
-    this.alpha = 0.7
-    this.speed = 0.0
-    this.mix = 1.0
+    this.alpha = 0.9
+    this.speed = 5.0
+    this.mix = 0.1
     this.humanSize = 700.0
   }
 }
@@ -53,7 +53,7 @@ export default class MyVTF {
     this.gui = new dat.GUI()
     this.gui.add(this.params, 'alpha', 0, 1.0)
     this.gui.add(this.params, 'speed', 0, 20.0)
-    this.gui.add(this.params, 'mix', 0, 1.0)
+    this.gui.add(this.params, 'mix', 0.0, 0.994)
     this.gui.add(this.params, 'humanSize', 0, 1000.0)
   }
 
@@ -73,10 +73,10 @@ export default class MyVTF {
 
     // Base Scene Rendering
     this.scene = new THREE.Scene()
-    // this.scene.background = new THREE.Color( 0xffffff )
+    this.scene.background = new THREE.Color( 0xffffff )
 
     // this.scene.background = new THREE.Color( 0xffffff )
-    this.camera = new THREE.PerspectiveCamera(60,w/h, 1,10000 )
+    this.camera = new THREE.PerspectiveCamera(60,w/h, 1,1000 )
     this.camera.position.z = 220
     // this.controls = new THREE.OrbitControls(this.camera)
     // this.controls.minDistance = this.controls.maxDistance = this.camera.position.z
@@ -112,7 +112,7 @@ export default class MyVTF {
       uniforms:{
         positions:{ type: "t", value: null},
         modelPosition:  { type : "t", value: modelDataTexture.getTexture() },
-        pointSize: { type: "t", value: 2},
+        pointSize: { type: "t", value: 40},
         velocity: { type: "t", value: velocityTexture.getTexture()},
         time: { type: "f", value: null},
         colors: { type: "f", value: colorDataTexture.getTexture() },
@@ -137,6 +137,8 @@ export default class MyVTF {
     window.addEventListener('resize',()=>{this.onResize()})
     this.onResize()
     this.update()
+
+    $('canvas').on('click',()=>{this.onclickHandler()})
   }
 
 
@@ -153,9 +155,28 @@ export default class MyVTF {
     // Logger.debug('delta :',delta)
     // Logger.debug('time :',time)
     this.updateRenderShader(time)
+    this.particleObj.particles.rotation.y += Math.PI/180* 0.1
+    this.particleObj.particles.rotation.z += Math.PI/180* 0.1
+
+    let rotationAmount = 1.0 - this.params.mix
+    this.particleObj.particles.rotation.z = (Math.PI/180* time*2.0)*rotationAmount
+    // this.particleObj.particles.rotation.y = (Math.PI/180* time*2.0)*rotationAmount
+
     this.particleObj.update(time)
     // this.camera.rotation.y += Math.PI/180 * 1
     this.renderer.render(this.scene, this.camera)
+  }
+
+  onclickHandler(){
+    Logger.debug('onclick!')
+    Logger.debug(TWEEN)
+    let tween = new TWEEN.Tween(this.params)
+    .to( { mix:0.99 }, 1000 )
+    .easing( TWEEN.Easing.Quadratic.InOut )
+    .onComplete(function(){
+      tween.stop()
+    })
+    .start()
   }
 
   updateRenderShader(time){
@@ -169,6 +190,7 @@ export default class MyVTF {
   update(){
     this.animationID = requestAnimationFrame(()=>{this.update()})
     this.render()
+    TWEEN.update()
   }
 
   onResize(){
