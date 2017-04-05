@@ -14,7 +14,7 @@ export function getSide(vertices){
 export function parseMesh(vertices){
     var total = vertices.length;
     var size = parseInt( Math.sqrt( total * 3 ) + .5 );
-    var data = new Float32Array( size*size*3 );
+    var data = new Array( size*size*3 );
     for( var i = 0; i < total; i++ ) {
         data[i * 3] = vertices[i].x;
         data[i * 3 + 1] = vertices[i].y;

@@ -2,14 +2,14 @@
 // Utils
 import _ from 'lodash'
 import { makeSphere, makeGrand, makeInnerSphere,makeColors } from './utils/MyGeometry'
-import { getRandomData } from './utils/Utils'
+import { getRandomData, parseMesh } from './utils/Utils'
 import Particles from './Particles'
 import MoveParticles from './MoveParticles'
 import DataTexture from './DataTexture'
 
 ////////////////////////
 // Models
-
+import humanModel from '../../../models/human3.json'
 
 ////////////////////////
 // Shaders
@@ -24,6 +24,8 @@ class Params {
   constructor(){
     this.alpha = 0.7
     this.speed = 5.0
+    this.mix = 0.0
+    this.humanSize = 700.0
   }
 }
 
@@ -49,6 +51,8 @@ export default class MyVTF {
     this.gui = new dat.GUI()
     this.gui.add(this.params, 'alpha', 0, 1.0)
     this.gui.add(this.params, 'speed', 0, 20.0)
+    this.gui.add(this.params, 'mix', 0, 1.0)
+    this.gui.add(this.params, 'humanSize', 0, 1000.0)
   }
 
   init(){
@@ -79,24 +83,38 @@ export default class MyVTF {
     this.renderer.setSize(w,h)
     $('#pageContainer').append(this.renderer.domElement)
 
+    // load model
+    let loader = new THREE.JSONLoader()
+    let model = loader.parse(humanModel)
+    Logger.debug(model.geometry)
+    let modelVertices = model.geometry.vertices
+    let modelDataArray = parseMesh(modelVertices)
+    let modelData = new Float32Array( modelDataArray )
+    let side = Math.sqrt(modelDataArray.length / 3)
+    let dataTexture = new DataTexture(modelData, this.renderer)
 
     // gpgpu 用意
-    let side = 126/2
-    let verticalData = getRandomData(side, side, 300)
+    // let side = 126/2
+
+    let verticalData = getRandomData(side, side, 500)
     let velocityData = makeInnerSphere(1, side*side)
     let colorData = makeColors(side*side)
     let velocityTexture = new DataTexture(velocityData, this.renderer)
     let colorDataTexture = new DataTexture(colorData, this.renderer)
 
+
     let renderShader = new THREE.ShaderMaterial({
       uniforms:{
         positions:{ type: "t", value: null},
-        pointSize: { type: "t", value: 40},
+        modelPosition:  { type : "t", value: dataTexture},
+        pointSize: { type: "t", value: 20},
         velocity: { type: "t", value: velocityTexture.getTexture()},
         time: { type: "f", value: null},
         colors: { type: "f", value: colorDataTexture.getTexture() },
         alpha: { type: "f", value: this.params.alpha },
-        speed: { type: "f", value: this.params.speed }
+        speed: { type: "f", value: this.params.speed },
+        mixAmount: { type: "f", value : this.params.mix },
+        humanSize: { type: "f", value : this.params.humanSize }
       },
       vertexShader: renderVertShader,
       fragmentShader: renderFragShader,
@@ -137,6 +155,8 @@ export default class MyVTF {
   updateRenderShader(time){
     this.renderShader.uniforms.alpha.value = this.params.alpha
     this.renderShader.uniforms.speed.value = this.params.speed
+    this.renderShader.uniforms.mixAmount.value = this.params.mix
+    this.renderShader.uniforms.humanSize.value = this.params.humanSize
   }
 
 
@@ -160,5 +180,9 @@ export default class MyVTF {
 
   destroy(){
     window.cancelAnimationFrame(this.animationID)
+    $(this.renderer.domElement).remove()
+    $('.dg.main').remove()
+    this.gui = null
+    this.params = null
   }
 }
